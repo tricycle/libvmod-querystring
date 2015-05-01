@@ -29,9 +29,9 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
 AM_CFLAGS = @DEFINE_MAJOR@ @DEFINE_ABI@ @DEFINE_LOGGING@
-INCLUDES = -I$(VARNISHSRC)/include -I$(VARNISHSRC)/bin/varnishd -I$(VARNISHSRC)
+AM_CPPFLAGS = $(VMOD_INCLUDES)
 
-vmoddir = $(VMODDIR)
+vmoddir = $(VMOD_DIR)
 vmod_LTLIBRARIES = libvmod_querystring.la
 
 libvmod_querystring_la_LDFLAGS = -module -export-dynamic -avoid-version -shared
@@ -49,10 +49,10 @@ vcc_if.c vcc_if.h vmod_querystring.man.rst: *.vcc ../README.rst
 VMOD_TESTS = tests/*.vtc
 .PHONY: $(VMOD_TESTS)
 
-tests/*.vtc:
-	$(VARNISHSRC)/bin/varnishtest/varnishtest -Dvarnishd=$(VARNISHSRC)/bin/varnishd/varnishd -Dvmod_topbuild=$(abs_top_builddir) $@
+check:
+	$(VARNISHTEST) -Dvarnishd=$(VARNISHD) \
+	    -Dvmod_topbuild=$(abs_top_builddir) $(VMOD_TESTS)
 
-check: $(VMOD_TESTS)
 
 EXTRA_DIST = \
 	vmod_querystring.vcc \
